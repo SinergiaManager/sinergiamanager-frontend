@@ -4,6 +4,7 @@ import './index.css';
 
 import Login from './components/Login';
 import React, { StrictMode } from 'react';
+import ForgotPassword from './components/ForgotPassword';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </Router>
       </div>
