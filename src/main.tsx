@@ -7,6 +7,7 @@ import React, { StrictMode } from 'react';
 import ForgotPassword from './components/ForgotPassword';
 import Drawer from './components/Drawer';
 import Navbar from './components/Navbar';
+import PasswordReset from './components/PasswordReset';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/password-reset" element={<PasswordReset />} />
             <Route
               path="/dashboard"
               element={
