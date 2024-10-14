@@ -6,6 +6,7 @@ import Login from './components/Login';
 import React, { StrictMode } from 'react';
 import ForgotPassword from './components/ForgotPassword';
 import Drawer from './components/Drawer';
+import Navbar from './components/Navbar';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,8 @@ const App: React.FC = () => {
                     <Drawer />
 
                     <div className="flex-grow bg-gray-100 dark:bg-gray-900 p-6">
-                      <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-200 text-center">
+                      <Navbar />
+                      <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-200 text-center mt-3">
                         Dashboard
                       </h1>
                     </div>

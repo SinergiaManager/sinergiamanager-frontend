@@ -20,7 +20,7 @@ const Drawer: React.FC = () => {
     return (
         <div className="bg-gray-100 dark:bg-gray-900">
             <button
-                className="fixed top-4 left-4 z-50 bg-white dark:bg-gray-800 p-4 rounded-md shadow-md md:hidden cursor-pointer"
+                className="fixed bottom-4 left-4 z-50 bg-white dark:bg-gray-800 p-4 rounded-md shadow-md md:hidden cursor-pointer"
                 onClick={toggleDrawer}
             >
                 <FaBars className="h-6 w-6 text-black dark:text-white" />
