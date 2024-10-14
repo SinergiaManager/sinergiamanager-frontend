@@ -5,4 +5,10 @@ interface User {
     token: string;
 }
 
-export type { User };
+interface AlertProps {
+    message: string;
+    type: 'success' | 'error' | 'warning';
+    onClose: () => void;
+}
+
+export type { User, AlertProps };
