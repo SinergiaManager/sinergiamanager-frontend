@@ -15,6 +15,8 @@ const Navbar: React.FC = () => {
     const username = "John Doe";
     const role = "Administrator";
 
+    const [notifications, setNotifications] = useState([]);
+
     const toggleSettingsMenu = () => {
         setShowSettingsMenu(!showSettingsMenu);
         setShowNotificationMenu(false); // Close notifications if settings menu is opened
@@ -59,7 +61,6 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6">
-                {/* Notification Icon with Dropdown */}
                 <div className="relative" ref={notificationMenuRef}>
                     <FaBell
                         className="h-6 w-6 text-gray-700 dark:text-gray-200 cursor-pointer"
@@ -68,17 +69,18 @@ const Navbar: React.FC = () => {
 
                     {showNotificationMenu && (
                         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-2">
-                            <p className="block px-4 py-2 text-gray-800 dark:text-gray-200">
-                                No new notifications
+                            <p className="block px-4 py-2 text-gray-800 dark:text-gray-200 flex items-center">
+                                {console.log(notifications)}
+                                <span className="mr-2 text-red-500 font-bold">{notifications.length}</span>
+                                notifications
                             </p>
-                            <a href="#" className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                            <a href="#" className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center">
                                 View all notifications
                             </a>
                         </div>
                     )}
                 </div>
 
-                {/* Profile & Settings Menu */}
                 <div className="relative" ref={settingsMenuRef}>
                     <div className="flex items-center space-x-3 cursor-pointer" onClick={toggleSettingsMenu}>
                         <img
