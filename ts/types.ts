@@ -5,4 +5,12 @@ interface User {
     token: string;
 }
 
-export type { User };
+interface ConfigurationFormData {
+    smtpServer: string;
+    port: string;
+    supportEmail: string;
+    notificationEmail: string;
+    notificationEmailPassword: string;
+};
+
+export type { User, ConfigurationFormData };
