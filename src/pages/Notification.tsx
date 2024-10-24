@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Drawer from '../components/Drawer';
 import Navbar from '../components/Navbar';
 import profilePic from '../assets/react.svg';
@@ -7,6 +7,32 @@ import { Days, Months } from '../../ts/types';
 
 const Notification: React.FC = () => {
   const pageName = "Notification";
+  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
+
+  const notificationMenuRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const toggleNotificationMenu = (index: number) => {
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    // Close the menus if clicked outside
+    notificationMenuRefs.current.forEach((ref, index) => {
+      if (ref && !ref.contains(event.target as Node)) {
+        setOpenMenuIndex(null);
+      }
+    });
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
@@ -22,7 +48,8 @@ const Notification: React.FC = () => {
     sentDate: yesterday,
     isRead: true
   }
-  ]
+  ];
+
   return (
     <>
       <div className="flex h-screen">
@@ -44,7 +71,7 @@ const Notification: React.FC = () => {
                 const now = new Date();
                 const sentDate = new Date(notification.sentDate);
                 const diffInDays = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
-                
+
                 let group = '';
                 if (diffInDays === 0) {
                   group = "Today";
@@ -92,7 +119,20 @@ const Notification: React.FC = () => {
                         </p>
                       </div>
                       {!notification.isRead && <div className="h-2 w-2 bg-blue-500 rounded-full"></div>}
-                      <BsThreeDotsVertical className="h-6 w-6 text-gray-700 dark:text-gray-200 cursor-pointer" />
+                      <BsThreeDotsVertical className="h-6 w-6 text-gray-700 dark:text-gray-200 cursor-pointer" onClick={() => toggleNotificationMenu(index)} />
+                      <div className="relative" ref={(ref) => {
+                        notificationMenuRefs.current[index] = ref;
+                      }}>
+                        {openMenuIndex === index && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg z-10">
+                            <ul className="py-1">
+                              <li className="px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">Mark as read</li>
+                              <li className="px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">Delete</li>
+                              <li className="px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">Select</li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
