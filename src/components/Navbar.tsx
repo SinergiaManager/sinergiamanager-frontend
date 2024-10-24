@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaBell, FaChevronDown } from 'react-icons/fa';
 import profilePic from '../assets/react.svg';
+interface NavbarProps {
+    pageName?: string;
+}
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<NavbarProps> = ({ pageName }) => {
     const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
     const [showNotificationMenu, setShowNotificationMenu] = useState<boolean>(false);
 
@@ -52,12 +55,26 @@ const Navbar: React.FC = () => {
     return (
         <nav className="w-full bg-white dark:bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
             <div className="flex flex-col items-start space-y-1">
-                <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                    Welcome, {username}
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400">
-                    Today is {formattedDate}.
-                </p>
+                {!pageName && (
+                    <>
+                        <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                            Welcome, {username}
+                        </h1>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Today is {formattedDate}.
+                        </p>
+                    </>
+                )}
+                {pageName === "Notification" && (
+                    <>
+                        <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center space-x-2">
+                            <FaBell /> <span>{pageName}</span>
+                        </h1>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Read and delete notifications here.
+                        </p>
+                    </>
+                )}
             </div>
 
             <div className="flex items-center space-x-6">
@@ -70,7 +87,6 @@ const Navbar: React.FC = () => {
                     {showNotificationMenu && (
                         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-2">
                             <p className="block px-4 py-2 text-gray-800 dark:text-gray-200 flex items-center">
-                                {console.log(notifications)}
                                 <span className="mr-2 text-red-500 font-bold">{notifications.length}</span>
                                 notifications
                             </p>

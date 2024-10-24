@@ -5,9 +5,9 @@ import './index.css';
 import Login from './components/Login';
 import React, { StrictMode } from 'react';
 import ForgotPassword from './components/ForgotPassword';
-import Drawer from './components/Drawer';
-import Navbar from './components/Navbar';
 import PasswordReset from './components/PasswordReset';
+import Dashboard from './pages/Dashboard';
+import Notification from './pages/Notification';
 
 const App: React.FC = () => {
   return (
@@ -21,20 +21,10 @@ const App: React.FC = () => {
             <Route
               path="/dashboard"
               element={
-                <>
-                  <div className="flex h-screen">
-                    <Drawer />
-
-                    <div className="flex-grow bg-gray-100 dark:bg-gray-900 p-6">
-                      <Navbar />
-                      <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-200 text-center mt-3">
-                        Dashboard
-                      </h1>
-                    </div>
-                  </div>
-                </>
+                <Dashboard/>
               }
             />
+            <Route path="/notifications" element={<Notification />} />
 
           </Routes>
         </Router>
