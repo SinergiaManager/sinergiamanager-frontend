@@ -12,16 +12,14 @@ const Notification: React.FC = () => {
   const notificationMenuRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const toggleNotificationMenu = (index: number) => {
-    setOpenMenuIndex(openMenuIndex === index ? null : index);
+    setOpenMenuIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    // Close the menus if clicked outside
-    notificationMenuRefs.current.forEach((ref, index) => {
-      if (ref && !ref.contains(event.target as Node)) {
-        setOpenMenuIndex(null);
-      }
-    });
+    if (notificationMenuRefs.current.every((ref) => ref && !ref.contains(event.target as Node))) {
+      console.log('clicked outside');
+      setOpenMenuIndex(null);
+    }
   };
 
   useEffect(() => {
@@ -33,16 +31,22 @@ const Notification: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log(openMenuIndex);
+  }, [openMenuIndex]);
+
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
   const notifications = [{
+    id: 1,
     profilePic: profilePic,
     title: "Notification title",
     sentDate: new Date(),
     isRead: false
   },
   {
+    id: 2,
     profilePic: profilePic,
     title: "Notification title2",
     sentDate: yesterday,
@@ -96,8 +100,8 @@ const Notification: React.FC = () => {
                     </div>
                   </div>
 
-                  {notifications.map((notification, index) => (
-                    <div key={index} className={`flex items-center space-x-4 py-4 border-b border-gray-200 dark:border-gray-700 rounded px-5 ${!notification.isRead ? 'bg-blue-950' : ''}`}>
+                  {notifications.map((notification) => (
+                    <div key={notification.id} className={`flex items-center space-x-4 py-4 border-b border-gray-200 dark:border-gray-700 rounded px-5 ${!notification.isRead ? 'bg-blue-950' : ''}`}>
                       <img src={notification.profilePic} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
                       <div className="flex-grow">
                         <p className="text-gray-800 dark:text-gray-200">{notification.title}</p>
@@ -119,11 +123,11 @@ const Notification: React.FC = () => {
                         </p>
                       </div>
                       {!notification.isRead && <div className="h-2 w-2 bg-blue-500 rounded-full"></div>}
-                      <BsThreeDotsVertical className="h-6 w-6 text-gray-700 dark:text-gray-200 cursor-pointer" onClick={() => toggleNotificationMenu(index)} />
+                      <BsThreeDotsVertical className="h-6 w-6 text-gray-700 dark:text-gray-200 cursor-pointer" onClick={() => toggleNotificationMenu(notification.id)} />
                       <div className="relative" ref={(ref) => {
-                        notificationMenuRefs.current[index] = ref;
+                        notificationMenuRefs.current.push(ref);
                       }}>
-                        {openMenuIndex === index && (
+                        {openMenuIndex === notification.id && (
                           <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg z-10">
                             <ul className="py-1">
                               <li className="px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">Mark as read</li>
