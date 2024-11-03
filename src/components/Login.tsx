@@ -79,6 +79,7 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 rounded hover:from-blue-700 hover:to-blue-900"
+                onClick={() => navigate("/dashboard")}
               >
                 Sign In
               </button>
