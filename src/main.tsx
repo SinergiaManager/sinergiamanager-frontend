@@ -5,6 +5,7 @@ import './index.css';
 import Login from './components/Login';
 import React, { StrictMode } from 'react';
 import ForgotPassword from './components/ForgotPassword';
+import ConfigurationWizard from './pages/ConfigurationWizard';
 import PasswordReset from './components/PasswordReset';
 import Dashboard from './pages/Dashboard';
 import Notification from './pages/Notification';
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/configuration" element={<ConfigurationWizard />} />
             <Route path="/reset-password" element={<PasswordReset />} />
             <Route
               path="/dashboard"
