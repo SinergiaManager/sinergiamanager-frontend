@@ -28,6 +28,7 @@ const PasswordReset: React.FC = () => {
                 setMessage('Failed to reset password. Please try again.');
             }
         } catch (error) {
+            console.error(error);
             setMessage('An error occurred. Please try again.');
         }
     };

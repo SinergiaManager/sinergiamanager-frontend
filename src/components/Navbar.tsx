@@ -18,7 +18,6 @@ const Navbar: React.FC<NavbarProps> = ({ pageName }) => {
     const username = "John Doe";
     const role = "Administrator";
 
-    const [notifications, setNotifications] = useState([]);
 
     const toggleSettingsMenu = () => {
         setShowSettingsMenu(!showSettingsMenu);
@@ -87,7 +86,6 @@ const Navbar: React.FC<NavbarProps> = ({ pageName }) => {
                     {showNotificationMenu && (
                         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-2">
                             <p className="block px-4 py-2 text-gray-800 dark:text-gray-200 flex items-center">
-                                <span className="mr-2 text-red-500 font-bold">{notifications.length}</span>
                                 notifications
                             </p>
                             <a href="#" className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center">

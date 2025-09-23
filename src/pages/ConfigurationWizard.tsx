@@ -63,45 +63,49 @@ const ConfigurationWizard = () => {
           {steps[currentStep].description}
         </p>
 
-        <div className={`space-y-4 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          {steps[currentStep].fields.map((field, index) => (
-            <div key={index}>
-              <label className="block text-sm mb-2 dark:text-gray-300">{field.label}</label>
-              <input
-                type={field.type}
-                value={formData[field.label.replace(" ", "").toLowerCase() as keyof ConfigurationFormData]}
-                onChange={(e) => handleChange(e, field.label.replace(" ", "").toLowerCase() as keyof ConfigurationFormData)}
-                className="w-full border border-gray-300 px-3 py-2 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
-                placeholder={field.placeholder}
-                required={field.required}
-              />
-            </div>
-          ))}
-        </div>
+        <form onSubmit={e => e.preventDefault()}>
+          <div className={`space-y-4 transition-opacity duration-300 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+            {steps[currentStep].fields.map((field, index) => (
+              <div key={index}>
+                <label className="block text-sm mb-2 dark:text-gray-300">{field.label}</label>
+                <input
+                  type={field.type}
+                  value={formData[field.label.replace(" ", "").toLowerCase() as keyof ConfigurationFormData] ?? ""}
+                  onChange={(e) => handleChange(e, field.label.replace(" ", "").toLowerCase() as keyof ConfigurationFormData)}
+                  className="w-full border border-gray-300 px-3 py-2 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  {...(field.type === "password" ? { autoComplete: "current-password" } : field.type === "email" ? { autoComplete: "username" } : {})}
+                />
+              </div>
+            ))}
+          </div>
 
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={previousStep}
-            disabled={currentStep === 0}
-            className={`px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-all duration-300 ${currentStep === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-          >
-            Go Back
-          </button>
-
-          {currentStep < steps.length - 1 ? (
+          <div className="flex justify-between mt-8">
             <button
-              onClick={nextStep}
-              className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all duration-300"
+              type="button"
+              onClick={previousStep}
+              disabled={currentStep === 0}
+              className={`px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-all duration-300 ${currentStep === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              Next
+              Go Back
             </button>
-          ) : (
-            <button className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800 transition-all duration-300">
-              Finish
-            </button>
-          )}
-        </div>
+
+            {currentStep < steps.length - 1 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all duration-300"
+              >
+                Next
+              </button>
+            ) : (
+              <button type="submit" className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800 transition-all duration-300">
+                Finish
+              </button>
+            )}
+          </div>
+        </form>
       </div>
     </div>
   );

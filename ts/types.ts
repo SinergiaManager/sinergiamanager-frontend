@@ -13,6 +13,10 @@ interface ConfigurationFormData {
     notificationEmailPassword: string;
 };
 
+interface ConfigurationStatus {
+    hasConfiguration: boolean;
+}
+
 interface AlertProps {
     message: string;
     type: 'success' | 'error' | 'warning';
@@ -44,6 +48,6 @@ const Months = [
     "December"
 ];
 
-export type { User, AlertProps };
+export type { User, AlertProps, ConfigurationFormData, ConfigurationStatus };
 
 export { Days, Months };
