@@ -2,34 +2,38 @@ import React, { useState } from 'react';
 import logo from '../assets/react.svg';
 import sideImage from '../assets/forgotPassword.svg';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../../ts/apiClient';
+import Alert from './Alert';
 
 const PasswordReset: React.FC = () => {
     const navigate = useNavigate();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [alertMsg, setAlertMsg] = useState('');
+    const [alertType, setAlertType] = useState<'success'|'error'|'warning'>('success');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Add your API call here to handle password reset
         try {
-            // Example API call
-            const response = await fetch('/api/password-reset', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ oldPassword, newPassword }),
-            });
-
-            if (response.ok) {
-                setMessage('Your password has been successfully reset.');
-            } else {
-                setMessage('Failed to reset password. Please try again.');
+            if (newPassword.length < 6) {
+                setAlertType('warning');
+                setAlertMsg('La nuova password deve avere almeno 6 caratteri');
+                return;
             }
+            setIsSubmitting(true);
+            await apiClient.post('/auth/reset-password', { oldPassword, newPassword });
+            setMessage('Your password has been successfully reset.');
+            setAlertType('success');
+            setAlertMsg('Password aggiornata');
         } catch (error) {
             console.error(error);
             setMessage('An error occurred. Please try again.');
+            setAlertType('error');
+            setAlertMsg('Errore nel reset della password');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -66,6 +70,7 @@ const PasswordReset: React.FC = () => {
                                     type="password"
                                     placeholder="Enter your old password"
                                     required
+                                    autoComplete="current-password"
                                     value={oldPassword}
                                     onChange={(e) => setOldPassword(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
@@ -82,6 +87,7 @@ const PasswordReset: React.FC = () => {
                                     type="password"
                                     placeholder="Enter your new password"
                                     required
+                                    autoComplete="new-password"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
@@ -90,12 +96,14 @@ const PasswordReset: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 rounded hover:from-blue-700 hover:to-blue-900"
+                                disabled={isSubmitting}
+                                className={`w-full px-4 py-3 text-white rounded ${isSubmitting ? 'bg-blue-300 cursor-not-allowed' : 'bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 hover:from-blue-700 hover:to-blue-900'}`}
                             >
-                                Reset Password
+                                {isSubmitting ? 'Updating...' : 'Reset Password'}
                             </button>
                         </form>
                         {message && <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">{message}</p>}
+                        {alertMsg && <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg('')} />}
                     </div>
                 </div>
 

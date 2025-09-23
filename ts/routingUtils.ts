@@ -13,19 +13,13 @@ export interface RoutingDecision {
 }
 
 export class RoutingUtils {
-  /**
-   * Determina dove reindirizzare l'utente basandosi sullo stato di autenticazione e configurazione
-   */
   static async determineRoute(): Promise<RoutingDecision> {
     try {
-      // Controlla autenticazione
       const isLoggedIn = AuthService.isAuthenticated();
       
-      // Controlla configurazione
       const configStatus = await ConfigurationService.checkConfiguration();
       const hasConfiguration = configStatus.hasConfiguration;
 
-      // Logica di routing
       if (hasConfiguration) {
         if (isLoggedIn) {
           return {

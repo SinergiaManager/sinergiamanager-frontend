@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../assets/react.svg';
 import sideImage from '../assets/forgotPassword.svg';
 import { useNavigate } from 'react-router-dom';
+import Alert from './Alert';
+import { apiClient } from '../../ts/apiClient';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [alertType, setAlertType] = useState<'success'|'error'|'warning'>('success');
 
   return (
     <div className="flex items-center justify-center grow bg-gray-100 dark:bg-gray-900 h-screen">
@@ -27,7 +33,26 @@ const ForgotPassword: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-400">Kindly enter the email address linked to this account and we will send you a code to enable you change your password.</p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={async (e) => {
+              e.preventDefault();
+              const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRe.test(email)) {
+                setAlertType('warning');
+                setAlertMsg('Inserisci un\'email valida');
+                return;
+              }
+              try {
+                setIsSubmitting(true);
+                await apiClient.post('/auth/forgot-password', { email });
+                setAlertType('success');
+                setAlertMsg('Email inviata con le istruzioni');
+              } catch {
+                setAlertType('error');
+                setAlertMsg('Impossibile inviare l\'email');
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}>
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Email address
@@ -38,17 +63,22 @@ const ForgotPassword: React.FC = () => {
                   type="email"
                   placeholder="Enter your email address"
                   required
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 rounded hover:from-blue-700 hover:to-blue-900"
+                disabled={isSubmitting}
+                className={`w-full px-4 py-3 text-white rounded ${isSubmitting ? 'bg-blue-300 cursor-not-allowed' : 'bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 hover:from-blue-700 hover:to-blue-900'}`}
               >
-                Reset Password
+                {isSubmitting ? 'Sending...' : 'Reset Password'}
               </button>
             </form>
+            {alertMsg && <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg('')} />}
           </div>
         </div>
 

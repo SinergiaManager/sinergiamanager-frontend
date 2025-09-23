@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaBell, FaChevronDown } from 'react-icons/fa';
 import profilePic from '../assets/react.svg';
+
 interface NavbarProps {
     pageName?: string;
 }

@@ -3,10 +3,17 @@ import logo from '../assets/react.svg';
 import sideImage from '../assets/login.svg';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../../ts/services/authService';
+import Alert from './Alert';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [alertType, setAlertType] = useState<'success'|'error'|'warning'>('success');
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -32,7 +39,31 @@ const Login: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-400">Please sign in</p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={async (e) => {
+              e.preventDefault();
+              // Validazioni semplici
+              const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRe.test(email)) {
+                setAlertType('warning');
+                setAlertMsg('Inserisci un\'email valida');
+                return;
+              }
+              if (password.length < 6) {
+                setAlertType('warning');
+                setAlertMsg('La password deve avere almeno 6 caratteri');
+                return;
+              }
+              try {
+                setIsSubmitting(true);
+                await AuthService.login(email, password);
+                navigate('/dashboard');
+              } catch {
+                setAlertType('error');
+                setAlertMsg('Credenziali non valide');
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}>
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Email address
@@ -43,6 +74,9 @@ const Login: React.FC = () => {
                   type="email"
                   placeholder="Enter your email address"
                   required
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
@@ -58,6 +92,9 @@ const Login: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="●●●●●●●"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
                   />
                   <button
@@ -78,12 +115,13 @@ const Login: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 rounded hover:from-blue-700 hover:to-blue-900"
-                onClick={() => { localStorage.setItem("token", "dummy"); navigate("/dashboard"); }}
+                disabled={isSubmitting}
+                className={`w-full px-4 py-3 text-white rounded ${isSubmitting ? 'bg-blue-300 cursor-not-allowed' : 'bg-gradient-to-r from-blue-400 to-blue-700 dark:from-blue-600 dark:to-blue-900 hover:from-blue-700 hover:to-blue-900'}`}
               >
-                Sign In
+                {isSubmitting ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
+            {alertMsg && <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg('')} />}
           </div>
         </div>
 

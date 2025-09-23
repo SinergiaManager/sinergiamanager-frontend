@@ -2,9 +2,6 @@ import { apiClient } from '../apiClient';
 import { User } from '../types';
 
 export class AuthService {
-  /**
-   * Controlla se l'utente è attualmente autenticato
-   */
   static isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
     if (!token) return false;
@@ -16,9 +13,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Controlla se il token è scaduto
-   */
   static isTokenExpired(token: string): boolean {
     try {
       /* const decodedToken = JSON.parse(atob(token.split('.')[1]));
@@ -29,9 +23,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Ottiene l'utente corrente dal localStorage
-   */
   static getCurrentUser(): User | null {
     try {
       const userString = localStorage.getItem('user');
@@ -41,9 +32,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Ottiene il token corrente dal localStorage
-   */
   static getCurrentToken(): string | null {
     try {
       const token = localStorage.getItem('token');
@@ -53,9 +41,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Effettua il login
-   */
   static async login(email: string, password: string): Promise<User> {
     try {
       const response = await apiClient.post<{user: User, token: string}>('/auth/login', {
@@ -65,7 +50,6 @@ export class AuthService {
       
       const { user, token } = response.data;
       
-      // Salva nel localStorage
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', JSON.stringify(token));
       
@@ -76,17 +60,11 @@ export class AuthService {
     }
   }
 
-  /**
-   * Effettua il logout
-   */
   static logout(): void {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   }
 
-  /**
-   * Controlla se l'utente ha un ruolo specifico
-   */
   static hasRole(requiredRoles?: string[]): boolean {
     if (!requiredRoles || requiredRoles.length === 0) return true;
     
