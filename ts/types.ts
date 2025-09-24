@@ -6,12 +6,12 @@ interface User {
 }
 
 interface ConfigurationFormData {
-    smtpServer: string;
-    port: string;
-    supportEmail: string;
-    notificationEmail: string;
-    notificationEmailPassword: string;
-};
+    support_email: string;
+    smtp_host: string;
+    smtp_port: number;
+    smtp_user: string;
+    smtp_pass: string;
+}
 
 interface ConfigurationStatus {
     hasConfiguration: boolean;

@@ -4,17 +4,17 @@ import { steps } from '../../ts/configurationSteps';
 import logo from '../assets/react.svg';
 import Alert from '../components/Alert';
 import { ConfigurationService } from '../../ts/services/configurationService';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ConfigurationWizard = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ConfigurationFormData>({
-    smtpServer: "",
-    port: "",
-    supportEmail: "",
-    notificationEmail: "",
-    notificationEmailPassword: "",
+    support_email: "",
+    smtp_host: "",
+    smtp_port: 0,
+    smtp_user: "",
+    smtp_pass: "",
   });
 
   const [isTransitioning, setIsTransitioning] = useState(false); 
@@ -28,34 +28,38 @@ const ConfigurationWizard = () => {
     return (label: string): keyof ConfigurationFormData => {
       const key = label.toLowerCase().replace(/\s+/g, "");
       switch (key) {
-        case 'smtpserver': return 'smtpServer';
-        case 'port': return 'port';
-        case 'supportemail': return 'supportEmail';
-        case 'emailaddress': return 'notificationEmail';
-        case 'password': return 'notificationEmailPassword';
+        case 'smtpserver': return 'smtp_host';
+        case 'port': return 'smtp_port';
+        case 'supportemail': return 'support_email';
+        case 'emailaddress': return 'smtp_user';
+        case 'password': return 'smtp_pass';
         default:
           return (key as unknown) as keyof ConfigurationFormData; // fallback, ma non dovrebbe capitare
       }
     };
   }, []);
 
-  const validateField = (k: keyof ConfigurationFormData, value: string): string | null => {
-    if (!value || value.trim() === '') return 'Field is required';
-    if (k === 'port') {
-      if (!/^\d+$/.test(value)) return 'Port must be a number';
-      const n = Number(value);
-      if (n < 1 || n > 65535) return 'Port must be between 1 and 65535';
+  const validateField = (k: keyof ConfigurationFormData, value: string | number): string | null => {
+    if (k === 'smtp_port') {
+      const numValue = typeof value === 'string' ? Number(value) : value;
+      if (!numValue || isNaN(numValue)) return 'Port must be a number';
+      if (numValue < 1 || numValue > 65535) return 'Port must be between 1 and 65535';
+      return null;
     }
-    if (k === 'supportEmail' || k === 'notificationEmail') {
+    
+    const stringValue = typeof value === 'number' ? value.toString() : value;
+    if (!stringValue || stringValue.trim() === '') return 'Field is required';
+    
+    if (k === 'support_email' || k === 'smtp_user') {
       const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRe.test(value)) return 'Invalid email address';
+      if (!emailRe.test(stringValue)) return 'Invalid email address';
     }
     return null;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, label: string) => {
     const key = fieldKey(label);
-    const value = e.target.value;
+    const value = key === 'smtp_port' ? Number(e.target.value) || 0 : e.target.value;
     setFormData(prev => ({ ...prev, [key]: value }));
     const err = validateField(key, value);
     setErrors(prev => ({ ...prev, [key]: err || undefined }));
@@ -68,7 +72,7 @@ const ConfigurationWizard = () => {
     let valid = true;
     for (const f of stepFields) {
       const k = fieldKey(f.label);
-      const value = formData[k] ?? '';
+      const value = formData[k];
       const err = f.required ? validateField(k, value) : null;
       if (err) {
         valid = false;
@@ -100,7 +104,7 @@ const ConfigurationWizard = () => {
     const newErrors: Partial<Record<keyof ConfigurationFormData, string>> = {};
     let valid = true;
     (Object.keys(formData) as Array<keyof ConfigurationFormData>).forEach((k) => {
-      const err = validateField(k, formData[k] ?? '');
+      const err = validateField(k, formData[k]);
       if (err) {
         valid = false;
         newErrors[k] = err;
@@ -118,8 +122,11 @@ const ConfigurationWizard = () => {
       await ConfigurationService.saveConfiguration(formData);
       setAlertType('success');
       setAlertMsg('Configuration saved successfully');
-      // Naviga eventualmente alla dashboard
-      // navigate('/dashboard');
+      
+      // Naviga alla dashboard dopo un piccolo delay per mostrare il messaggio di successo
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } catch {
       setAlertType('error');
       setAlertMsg('Failed to save configuration');
@@ -155,7 +162,7 @@ const ConfigurationWizard = () => {
                 <label className="block text-sm mb-2 dark:text-gray-300">{field.label}</label>
                 <input
                   type={field.type}
-                  value={formData[fieldKey(field.label)] ?? ""}
+                  value={fieldKey(field.label) === 'smtp_port' ? (formData.smtp_port || '') : (formData[fieldKey(field.label)] || "")}
                   onChange={(e) => handleChange(e, field.label)}
                   className="w-full border border-gray-300 px-3 py-2 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
                   placeholder={field.placeholder}

@@ -12,12 +12,13 @@ const apiClient: AxiosInstance = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const tokenString = localStorage.getItem('token');
+    if (tokenString) {
       try {
-        config.headers.Authorization = `Bearer ${token}`;
+      const token = JSON.parse(tokenString);
+      config.headers.Authorization = `Bearer ${token}`;
       } catch (error) {
-        console.error('Error parsing token:', error);
+      console.error('Error parsing token:', error);
       }
     }
     return config;
@@ -35,10 +36,9 @@ apiClient.interceptors.response.use(
   (error) => {
     // Gestione errori globali
     if (error.response?.status === 401) {
-      // Token scaduto o non valido
-      localStorage.removeItem('token');
+     /*  localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      window.location.href = '/login'; */
     }
     return Promise.reject(error);
   }

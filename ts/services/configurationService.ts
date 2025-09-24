@@ -8,7 +8,6 @@ export class ConfigurationService {
       return response.data;
     } catch (error) {
       console.error('Error checking configuration:', error);
-      // In caso di errore, assumiamo che non ci sia configurazione
       return { hasConfiguration: false };
     }
   }
@@ -25,7 +24,7 @@ export class ConfigurationService {
 
   static async saveConfiguration(configData: ConfigurationFormData) {
     try {
-      const response = await apiClient.post('/configuration', configData);
+      const response = await apiClient.post('/configs', configData);
       return response.data;
     } catch (error) {
       console.error('Error saving configuration:', error);

@@ -25,8 +25,10 @@ export const useAuthConfig = (): UseAuthConfigResult => {
       setIsLoggedIn(authStatus);
       
       const configStatus = await ConfigurationService.checkConfiguration();
-      setHasConfiguration(configStatus.hasConfiguration);
-      
+      if(configStatus !== null && configStatus)
+        setHasConfiguration(true);
+      else
+        setHasConfiguration(false);
     } catch (err) {
       setError('Errore durante il controllo dello stato');
       console.error('Error in checkConfiguration:', err);

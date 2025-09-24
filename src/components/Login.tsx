@@ -41,7 +41,6 @@ const Login: React.FC = () => {
 
             <form className="space-y-6" onSubmit={async (e) => {
               e.preventDefault();
-              // Validazioni semplici
               const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               if (!emailRe.test(email)) {
                 setAlertType('warning');
